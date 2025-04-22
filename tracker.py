@@ -87,27 +87,31 @@ logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
 
 # Google Sheets logger
 def log_to_google_sheets(email, timestamp):
-    print("🟡 Entered log_to_google_sheets")
+    print("⚙️ log_to_google_sheets triggered")
+
     try:
-        print("🟡 Setting up scope and credentials")
-        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+        scope = [
+            "https://spreadsheets.google.com/feeds",
+            "https://www.googleapis.com/auth/drive"
+        ]
+
+        print("🔑 Loading creds.json...")
         creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
-        print("🟢 Credentials loaded")
+        print("✅ creds.json loaded")
 
         client = gspread.authorize(creds)
-        print("🟢 gspread authorized")
+        print("✅ gspread authorized")
 
-        # Replace sheet name with actual name or use open_by_key
-        # sheet = client.open("Email_Opens_Tracker").sheet1
-        sheet = client.open_by_key("1d9CS_AI_kJ-BEjrJHzk_EcVPp0AC4v4wEyq5oTyITgU").sheet1
-        print("🟢 Sheet opened")
+        sheet = client.open_by_key("1RW_6-9NKiwxWSc5rR5V7OJPnaR-uRL1sLN-Lf3r02kc").sheet1
+        print("✅ Sheet opened")
 
         sheet.append_row([timestamp, email])
-        print(f"[✅] Logged to Google Sheets: {email} at {timestamp}")
+        print(f"✅ Appended to Google Sheet: {timestamp}, {email}")
 
     except Exception as e:
-        print(f"[❌] Google Sheets logging failed: {e}")
+        print(f"❌ Google Sheets logging failed: {str(e)}")
         raise e
+
 
 
 

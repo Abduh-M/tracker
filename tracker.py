@@ -42,3 +42,31 @@ if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
+
+
+
+
+from collections import defaultdict
+
+@app.route('/dashboard')
+def dashboard():
+    counts = defaultdict(int)
+
+    try:
+        with open(LOG_FILE, "r") as f:
+            lines = f.readlines()
+            for line in lines:
+                if "OPENED by" in line:
+                    email = line.strip().split("OPENED by ")[-1]
+                    counts[email] += 1
+    except FileNotFoundError:
+        return "<h2>No opens logged yet.</h2>"
+
+    html = "<h2>📊 Open Count Per Email</h2><table border='1' cellpadding='5'><tr><th>Email</th><th>Open Count</th></tr>"
+    for email, count in sorted(counts.items(), key=lambda x: -x[1]):
+        html += f"<tr><td>{email}</td><td>{count}</td></tr>"
+    html += "</table>"
+
+    return html
+

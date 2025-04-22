@@ -87,19 +87,28 @@ logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
 
 # Google Sheets logger
 def log_to_google_sheets(email, timestamp):
+    print("🟡 Entered log_to_google_sheets")
     try:
+        print("🟡 Setting up scope and credentials")
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
-        client = gspread.authorize(creds)
+        print("🟢 Credentials loaded")
 
-        # Open the sheet by name or use .open_by_key()
-        sheet = client.open("Email_Opens_Tracker").sheet1
+        client = gspread.authorize(creds)
+        print("🟢 gspread authorized")
+
+        # Replace sheet name with actual name or use open_by_key
+        # sheet = client.open("Email_Opens_Tracker").sheet1
+        sheet = client.open_by_key("1d9CS_AI_kJ-BEjrJHzk_EcVPp0AC4v4wEyq5oTyITgU").sheet1
+        print("🟢 Sheet opened")
+
         sheet.append_row([timestamp, email])
-        print(f"[+] Logged to Google Sheets: {email} at {timestamp}")
+        print(f"[✅] Logged to Google Sheets: {email} at {timestamp}")
 
     except Exception as e:
-        print(f"[!] Google Sheets logging failed: {e}")
-        raise e  # 🚨 This forces the error to appear in Render logs
+        print(f"[❌] Google Sheets logging failed: {e}")
+        raise e
+
 
 
 @app.route('/pixel.png')

@@ -87,16 +87,12 @@ def log_to_google_sheets(email, timestamp):
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
         client = gspread.authorize(creds)
-
-        # Option 1: by title
-        # sheet = client.open("emails_opens").sheet1
-
-        # Option 2: by ID (recommended)
         sheet = client.open_by_key("1d9CS_AI_kJ-BEjrJHzk_EcVPp0AC4v4wEyq5oTyITgU").sheet1
-
         sheet.append_row([timestamp, email])
+        print(f"[+] Logged to Google Sheets: {email} at {timestamp}")
     except Exception as e:
         print(f"[!] Google Sheets logging failed: {e}")
+
 
 
 @app.route('/pixel.png')

@@ -91,11 +91,16 @@ def log_to_google_sheets(email, timestamp):
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
         client = gspread.authorize(creds)
-        sheet = client.open("Email_Opens_Tracker").sheet1  # or use open_by_key("<sheet-id>")
+
+        # Open the sheet by name or use .open_by_key()
+        sheet = client.open("Email_Opens_Tracker").sheet1
         sheet.append_row([timestamp, email])
         print(f"[+] Logged to Google Sheets: {email} at {timestamp}")
+
     except Exception as e:
         print(f"[!] Google Sheets logging failed: {e}")
+        raise e  # 🚨 This forces the error to appear in Render logs
+
 
 @app.route('/pixel.png')
 def tracking_pixel():

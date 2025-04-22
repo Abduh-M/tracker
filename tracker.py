@@ -37,16 +37,6 @@ def view_opens():
 
     return Response(html, mimetype='text/html')
 
-if __name__ == "__main__":
-    # For Render, use port 10000; for local use 5000
-    import os
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
-
-
-
-
-
 from collections import defaultdict
 
 @app.route('/dashboard')
@@ -54,7 +44,7 @@ def dashboard():
     counts = defaultdict(int)
 
     try:
-        with open(LOG_FILE, "r") as f:
+        with open("open_tracking.log", "r") as f:
             lines = f.readlines()
             for line in lines:
                 if "OPENED by" in line:
@@ -69,4 +59,16 @@ def dashboard():
     html += "</table>"
 
     return html
+
+    
+if __name__ == "__main__":
+    # For Render, use port 10000; for local use 5000
+    import os
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
+
+
+
+
 

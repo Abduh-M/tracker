@@ -4,6 +4,7 @@
 # import os
 # import gspread
 # from oauth2client.service_account import ServiceAccountCredentials
+# from collections import defaultdict
 
 # app = Flask(__name__)
 
@@ -11,17 +12,50 @@
 # LOG_FILE = "open_tracking.log"
 # logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
 
+# # Google Sheets logger
+# def log_to_google_sheets(email, timestamp):
+#     print("⚙️ log_to_google_sheets triggered")
+
+#     try:
+#         scope = [
+#             "https://spreadsheets.google.com/feeds",
+#             "https://www.googleapis.com/auth/drive"
+#         ]
+
+#         print("🔑 Loading creds.json...")
+#         creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+#         print("✅ creds.json loaded")
+
+#         client = gspread.authorize(creds)
+#         print("✅ gspread authorized")
+
+#         sheet = client.open_by_key("1RW_6-9NKiwxWSc5rR5V7OJPnaR-uRL1sLN-Lf3r02kc").sheet1
+#         print("✅ Sheet opened")
+
+#         sheet.append_row([timestamp, email])
+#         print(f"✅ Appended to Google Sheet: {timestamp}, {email}")
+
+#     except Exception as e:
+#         print(f"❌ Google Sheets logging failed: {str(e)}")
+#         raise e
+
+
+
+
 # @app.route('/pixel.png')
 # def tracking_pixel():
 #     email = request.args.get('email', 'unknown')
 #     timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 #     log_line = f"{timestamp} - OPENED by {email}"
-    
-#     # Log to file and console
+
+#     # Log to console and file
 #     print(log_line)
 #     logging.info(log_line)
-    
-#     # Return 1x1 pixel image
+
+#     # Log to Google Sheets
+#     log_to_google_sheets(email, timestamp)
+
+#     # Return transparent tracking pixel
 #     return send_file("pixel.png", mimetype='image/png')
 
 # @app.route('/view-opens')
@@ -36,17 +70,13 @@
 #     for line in logs:
 #         html += f"<li>{line.strip()}</li>"
 #     html += "</ul>"
-
 #     return Response(html, mimetype='text/html')
-
-# from collections import defaultdict
 
 # @app.route('/dashboard')
 # def dashboard():
 #     counts = defaultdict(int)
-
 #     try:
-#         with open("open_tracking.log", "r") as f:
+#         with open(LOG_FILE, "r") as f:
 #             lines = f.readlines()
 #             for line in lines:
 #                 if "OPENED by" in line:
@@ -59,13 +89,9 @@
 #     for email, count in sorted(counts.items(), key=lambda x: -x[1]):
 #         html += f"<tr><td>{email}</td><td>{count}</td></tr>"
 #     html += "</table>"
-
 #     return html
 
-    
 # if __name__ == "__main__":
-#     # For Render, use port 10000; for local use 5000
-#     import os
 #     port = int(os.environ.get("PORT", 10000))
 #     app.run(host="0.0.0.0", port=port)
 
@@ -86,7 +112,7 @@ LOG_FILE = "open_tracking.log"
 logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
 
 # Google Sheets logger
-def log_to_google_sheets(email, timestamp):
+def log_to_google_sheets(email, timestamp, name="unknown", title="unknown"):
     print("⚙️ log_to_google_sheets triggered")
 
     try:
@@ -95,18 +121,12 @@ def log_to_google_sheets(email, timestamp):
             "https://www.googleapis.com/auth/drive"
         ]
 
-        print("🔑 Loading creds.json...")
         creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
-        print("✅ creds.json loaded")
-
         client = gspread.authorize(creds)
-        print("✅ gspread authorized")
-
         sheet = client.open_by_key("1RW_6-9NKiwxWSc5rR5V7OJPnaR-uRL1sLN-Lf3r02kc").sheet1
-        print("✅ Sheet opened")
 
-        sheet.append_row([timestamp, email])
-        print(f"✅ Appended to Google Sheet: {timestamp}, {email}")
+        sheet.append_row([timestamp, email, name, title])
+        print(f"✅ Appended to Google Sheet: {timestamp}, {email}, {name}, {title}")
 
     except Exception as e:
         print(f"❌ Google Sheets logging failed: {str(e)}")
@@ -118,18 +138,18 @@ def log_to_google_sheets(email, timestamp):
 @app.route('/pixel.png')
 def tracking_pixel():
     email = request.args.get('email', 'unknown')
+    name = request.args.get('name', 'unknown')
+    title = request.args.get('title', 'unknown')
     timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-    log_line = f"{timestamp} - OPENED by {email}"
 
-    # Log to console and file
+    log_line = f"{timestamp} - OPENED by {email} - Name: {name} - Title: {title}"
     print(log_line)
     logging.info(log_line)
 
-    # Log to Google Sheets
-    log_to_google_sheets(email, timestamp)
+    log_to_google_sheets(email, timestamp, name, title)
 
-    # Return transparent tracking pixel
     return send_file("pixel.png", mimetype='image/png')
+
 
 @app.route('/view-opens')
 def view_opens():
@@ -167,6 +187,13 @@ def dashboard():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
+
+
+
+
+
+
 
 
 

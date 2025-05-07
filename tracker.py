@@ -177,7 +177,7 @@ def tracking_pixel():
     email = request.args.get('email', 'unknown')
     name = request.args.get('name', 'unknown')
     title = request.args.get('title', 'unknown')
-    batch_6 = request.args.get('batch_number', 'unknown')  # ✅ get batch
+    batch_number = request.args.get('batch_number', 'unknown')  # ✅ get batch
 
     timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 

@@ -112,7 +112,27 @@ LOG_FILE = "open_tracking.log"
 logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
 
 # Google Sheets logger
-def log_to_google_sheets(email, timestamp, name="unknown", title="unknown"):
+# def log_to_google_sheets(email, timestamp, name="unknown", title="unknown"):
+#     print("⚙️ log_to_google_sheets triggered")
+
+#     try:
+#         scope = [
+#             "https://spreadsheets.google.com/feeds",
+#             "https://www.googleapis.com/auth/drive"
+#         ]
+
+#         creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+#         client = gspread.authorize(creds)
+#         sheet = client.open_by_key("1RW_6-9NKiwxWSc5rR5V7OJPnaR-uRL1sLN-Lf3r02kc").sheet1
+
+#         sheet.append_row([timestamp, email, name, title])
+#         print(f"✅ Appended to Google Sheet: {timestamp}, {email}, {name}, {title}")
+
+#     except Exception as e:
+#         print(f"❌ Google Sheets logging failed: {str(e)}")
+#         raise e
+
+def log_to_google_sheets(email, timestamp, name="unknown", title="unknown", batch_6="unknown"):
     print("⚙️ log_to_google_sheets triggered")
 
     try:
@@ -125,12 +145,14 @@ def log_to_google_sheets(email, timestamp, name="unknown", title="unknown"):
         client = gspread.authorize(creds)
         sheet = client.open_by_key("1RW_6-9NKiwxWSc5rR5V7OJPnaR-uRL1sLN-Lf3r02kc").sheet1
 
-        sheet.append_row([timestamp, email, name, title])
-        print(f"✅ Appended to Google Sheet: {timestamp}, {email}, {name}, {title}")
+        # ✅ Now include batch_6 in the row
+        sheet.append_row([timestamp, email, name, title, batch_6])
+        print(f"✅ Appended to Google Sheet: {timestamp}, {email}, {name}, {title}, {batch_number}")
 
     except Exception as e:
         print(f"❌ Google Sheets logging failed: {str(e)}")
         raise e
+
 
 
 

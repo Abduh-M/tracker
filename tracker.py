@@ -157,18 +157,36 @@ def log_to_google_sheets(email, timestamp, name="unknown", title="unknown", batc
 
 
 
+# @app.route('/pixel.png')
+# def tracking_pixel():
+#     email = request.args.get('email', 'unknown')
+#     name = request.args.get('name', 'unknown')
+#     title = request.args.get('title', 'unknown')
+#     timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+
+#     log_line = f"{timestamp} - OPENED by {email} - Name: {name} - Title: {title}"
+#     print(log_line)
+#     logging.info(log_line)
+
+#     log_to_google_sheets(email, timestamp, name, title)
+
+#     return send_file("pixel.png", mimetype='image/png')
+
 @app.route('/pixel.png')
 def tracking_pixel():
     email = request.args.get('email', 'unknown')
     name = request.args.get('name', 'unknown')
     title = request.args.get('title', 'unknown')
+    batch_6 = request.args.get('batch_number', 'unknown')  # ✅ get batch
+
     timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
-    log_line = f"{timestamp} - OPENED by {email} - Name: {name} - Title: {title}"
+    log_line = f"{timestamp} - OPENED by {email} - Name: {name} - Title: {title} - Batch: {batch_6}"
     print(log_line)
     logging.info(log_line)
 
-    log_to_google_sheets(email, timestamp, name, title)
+    # ✅ Pass batch_6 to the log
+    log_to_google_sheets(email, timestamp, name, title, batch_6)
 
     return send_file("pixel.png", mimetype='image/png')
 

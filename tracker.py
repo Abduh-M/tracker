@@ -146,7 +146,7 @@ def log_to_google_sheets(email, timestamp, name="unknown", title="unknown", batc
         sheet = client.open_by_key("1RW_6-9NKiwxWSc5rR5V7OJPnaR-uRL1sLN-Lf3r02kc").sheet1
 
         # ✅ Now include batch_6 in the row
-        sheet.append_row([timestamp, email, name, title, batch_6])
+        sheet.append_row([timestamp, email, name, title, batch_number])
         print(f"✅ Appended to Google Sheet: {timestamp}, {email}, {name}, {title}, {batch_number}")
 
     except Exception as e:

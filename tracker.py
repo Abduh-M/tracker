@@ -132,7 +132,7 @@ logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
 #         print(f"❌ Google Sheets logging failed: {str(e)}")
 #         raise e
 
-def log_to_google_sheets(email, timestamp, name="unknown", title="unknown", batch_6="unknown"):
+def log_to_google_sheets(email, timestamp, name="unknown", title="unknown", batch_number="unknown"):
     print("⚙️ log_to_google_sheets triggered")
 
     try:
@@ -181,12 +181,12 @@ def tracking_pixel():
 
     timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
-    log_line = f"{timestamp} - OPENED by {email} - Name: {name} - Title: {title} - Batch: {batch_6}"
+    log_line = f"{timestamp} - OPENED by {email} - Name: {name} - Title: {title} - Batch: {batch_number}"
     print(log_line)
     logging.info(log_line)
 
     # ✅ Pass batch_6 to the log
-    log_to_google_sheets(email, timestamp, name, title, batch_6)
+    log_to_google_sheets(email, timestamp, name, title, batch_number)
 
     return send_file("pixel.png", mimetype='image/png')
 
